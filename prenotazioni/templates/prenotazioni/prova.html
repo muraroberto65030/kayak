@@ -1,0 +1,120 @@
+{% extends 'prenotazioni/home.html' %}
+{% load static %}
+
+{% block title %}Django Ajax CRUD{% endblock %}
+
+{% block content %}
+<div id="confermareg" style="display:none">
+            <p style="color:green;font-size:1.8em">Grazie <span id="confermaregutente">p</span>per esserti registrato. Attendi la conferma tramite e-mail</p>
+        </div>
+
+      <div id="register" class="comm">
+
+        <h2>Registrati:</h2>
+        <form id="addUser" action="/registrazione/">
+            <div class="form-group">
+                <input class="form-control" type="text" name="nome" placeholder="Nome" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="cognome" placeholder="Cognome" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="number" name="eta" min="10" max="100" placeholder="Età" required>
+            </div>
+
+            <div class="form-group">
+                <input class="form-control" type="text" name="indirizzo" placeholder="Indirizzo" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="number" name="telefono" placeholder="Telefono" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="livello" placeholder="Livello" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="email" placeholder="email" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="password" placeholder="Password" required>
+            </div>
+
+            {% csrf_token %}
+
+
+          <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+    </form>
+</div>
+<script class="type/javascript">
+    //Create Django Ajax call
+    $("form#addUser").submit(function() {
+        var nomeInput=$('input[nome="nome"]').val().trim();
+        var cognomeInput=$'(input[cognome="cognome"]'.val().trim();
+        var etaInput=$'(input[eta="eta"]'.val().trim();
+        var indirizzoInput=$'(input[indirizzo="indirizzo"]'.val().trim();
+        var telefonoInput=$'(input[telefono="telefono"]'.val().trim();
+        var livelloInput=$'(input[livello="livello"]'.val().trim();
+        var emailInput=$'(input[email="email"]'.val().trim();
+        var passwordInput=$'(input[password="password"]'.val().trim();
+
+        if (nomeInput && cognomeInput && etaInput && indirizzoInput && telefonoInput && livelloInput && emailInput && passwordInput) {
+
+    //Create Ajax Call
+    $.ajax({
+    url:{% url "registrazione" %},
+    data: {
+                    'csrfmiddlewaretoken':crsf,
+                    'name': nameInput,
+                    'cognome':cognomeInput,
+                    'age': ageInput,
+                    'address': addressInput,
+                    'telefono':telefonoInput,
+                    'livello':livelloInput,
+                    'email':emailInput,
+                    'password':passwordInput
+                },
+                              dataType: 'json',
+                type: "POST",
+                success: function (data) {
+                   $("#msgerrore").html(data);
+                   jsondata=JSON.parse(data);
+                    if(jsondata.msg=="tuttoOk"){
+                        $("#confermaregutente").val(jsondata.obj.nome)
+                        $("#confermareg").show();
+                        $("#register").hide();
+                     } else
+                        $("#msgerrore").html(data.msg);
+
+                },
+                error: function(xhr, status, error){
+                 var errorMessage = xhr.status + ': ' + xhr.statusText
+                    alert('Error - ' + errorMessage);
+                 }
+            });
+          } else {
+            alert("All fields must have a valid value.");
+        }
+        $('form#addUser').trigger("reset");
+        return false;
+    });
+    function appendToUsrTable(user) {
+        $("#userTable > tbody:last-child").append(`
+
+            <tr id="user"-${user.id}">
+                <td class="userNome" name="nome">${user.nome}</tr>
+                <td class="userCognome" name="Cognome">${user.Cognome}</tr>
+                <td class="etaNome" name="eta">${user.eta}</tr>
+                <td class="indirizzoNome" name="indirizzo">${user.indirizzo}</tr>
+                <td class="telefonoNome" name="telefono">${user.telefono}</tr>
+                <td class="livello" name="livello">${user.livello}</tr>
+                <td class="emailNome" name="email">${user.email}</tr>
+                <td class="passwordNome" name="password">${user.password}</tr>
+
+        ');
+    }
+
+
+</script>
+  <p style="color:red" id="msgerrore"></p>
+
+                      {{user}}
+{% endblock %}

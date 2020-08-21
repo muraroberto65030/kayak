@@ -1,0 +1,32 @@
+{% extends 'prenotazioni/home.html' %}
+{% load static %}
+
+{% block title %}Lista Clienti{% endblock %}
+
+{% block content %}
+
+         <!--{% if user.is_authenticated %}-->
+                <p  style="color:black;"> {{ clienti.nome}}</p>
+                <p  style="color:black;"> {{ clienti.cognome}}</p>
+                <p  style="color:black;"> {{ clienti.indirizzo}}</p>
+
+                <br>
+    <a class="btn btn-default"  href="">MODIFICA  <span class="glyphicon glyphicon-pencil"></span></a>
+                <br>
+                                <br>
+
+    <a class="btn btn-default" style="btn-outline-dark
+    color: #000000;
+    background-color: transparent;
+    background-image: none;
+    border-color: #000000;" href="" >CANCELLA <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> </a>
+<!--{% endif %}-->
+
+
+
+
+
+
+{% endblock %}
+
+{% endblock content %}
