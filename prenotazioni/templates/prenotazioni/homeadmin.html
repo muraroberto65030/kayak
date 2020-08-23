@@ -1,0 +1,161 @@
+{% extends 'prenotazioni/home.html' %}
+{% load static %}
+
+{% block title %}Registrazione{% endblock %}
+
+{% block content %}
+
+    {% for cliente in nuoviclienti %}
+        <div class="nuovocliente" style="display:none">
+            <p>{{ cliente.nome }}</p>
+            <p>{{ cliente.cognome }}</p>
+            <p>{{ cliente.email }}</p>
+            <p>{{ cliente.eta }}</p>
+            <p>{{ cliente.livello }}</p>
+        </div>
+    {%  endfor %}
+
+       {% for prenotazione in nuoveprenotazioni %}
+        <div class="nuovaprenotazione" style="display:none">
+            <p>{{ prenotazione.giorno }}</p>
+            <p>{{ prenotazione.cliente.cognome }}</p>
+            <p>{{ prenotazione.cliente.nome }}</p>
+            <p>{{ prenotazione.cliente.eta }}</p>
+            <p>{{ prenotazione.cliente.livello }}</p>
+        </div>
+    {%  endfor %}
+    <button id="home" class="btn" onclick="gotoHome()"><span class="glyphicon glyphicon-home"></span></button>
+    <button id="numeronuoviclienti" class="btn" onclick="gotoClienti()"><span class="glyphicon glyphicon-user"></span><span class="badge">4</span></button>
+    <button id="numeronuoveprenotazioni" class="btn" onclick="gotoPrenotazioni()"><span class="glyphicon glyphicon-tags"></span><span class="badge">4</span></button>
+    <button id="impostazioni" class="btn" onclick="gotoImpostazioni()"><span class="glyphicon glyphicon-cog"></span></button>
+    <button id="impostazioni" class="btn" onclick="logout()"><span class="glyphicon glyphicon-log-out"></span></button>
+    <div id="listanuoviclienti" class="container" style="display:none">
+    </div>
+
+    <div id="listanuoveprenotazioni" class="container" style="display:none">
+    </div>
+
+    <div id="impostazioni" class="container" style="display:none">
+
+    </div>
+
+    <script>
+
+    function logout(){
+        $.ajax({
+            url:"/prenotazioni/logout",
+            success: function () {
+                location.href="../../"
+            }
+        });
+    }
+    function gotoHome(){
+        $('div#listanuoviclienti').hide();
+        $('div#listanuoveprenotazioni').hide();
+        $('div#impostazioni').hide();
+    }
+    function gotoClienti(){
+        $('div#listanuoviclienti').show();
+        $('div#listanuoveprenotazioni').hide();
+        $('div#impostazioni').hide();
+    }
+    function gotoPrenotazioni(){
+        $('div#listanuoviclienti').hide();
+        $('div#listanuoveprenotazioni').show();
+        $('div#impostazioni').hide();
+    }
+    function gotoImpostazioni(){
+        $('div#listanuoviclienti').hide();
+        $('div#listanuoveprenotazioni').hide();
+        $('div#impostazioni').show();
+    }
+    function ClientitoArray(){
+        let a=new Array();
+        $("div.nuovocliente").each(function (){
+            let riga={"nome":$(this).children("p").first().text(),
+                "cognome":$(this).children("p").first().next().text(),
+                "email":$(this).children("p").first().next().next().text(),
+                "eta":$(this).children("p").first().next().next().next().text(),
+                "livello":$(this).children("p").first().next().next().next().next().text()}
+                a.push(riga);
+        })
+        return a;
+    }
+
+    function printArrayClienti(a){
+
+        $("div#listanuoviclienti").html('<div class="row"><div class="col-sm-5">Nominativo</div><div class="col-sm-5">Email</div><div class="col-sm-2">Livello</div></div>');
+        a.forEach(function(item,index){
+            let riga="<div class='row'><div class='col-sm-5'>"+ item.cognome +' '+item.nome +'('+item.eta+')'+"</div>"+
+            "<div class='col-sm-5'>"+ item.email +"</div>"+
+            "<div class='col-sm-2'>"+ item.livello +"</div>";
+            $("div#listanuoviclienti").append(riga);
+        })
+        $("button#numeronuoviclienti > span.badge").text(a.length);
+
+    }
+
+    function sortClientiByName(a) {
+
+        a.sort(function(a,b){
+            nomeA=a.cognome.toUpperCase()+' '+a.nome.toUpperCase();
+            nomeB=b.cognome.toUpperCase()+' '+b.nome.toUpperCase();
+            if (nomeA < nomeB)
+                return -1;
+            if (nomeA > nomeB)
+                return 1;
+            return 0;
+
+        });
+        return a;
+    }
+
+    function sortClientiByEmail(a) {
+
+        a.sort(function(a,b){
+            nomeA=a.email.toUpperCase();
+            nomeB=b.email.toUpperCase();
+            if (nomeA < nomeB)
+                return -1;
+            if (nomeA > nomeB)
+                return 1;
+            return 0;
+
+        });
+        return a;
+    }
+
+    printArrayClienti(sortClientiByName(ClientitoArray()));
+
+    function PrenotazioniToArray(){
+         let a=new Array();
+        $("div.nuovaprenotazione").each(function (){
+            let riga={"giorno":$(this).children("p").first().text(),
+                "cognome":$(this).children("p").first().next().text(),
+                "nome":$(this).children("p").first().next().next().text(),
+                "eta":$(this).children("p").first().next().next().next().text(),
+                "livello":$(this).children("p").first().next().next().next().next().text()}
+                a.push(riga);
+        })
+        return a;
+    }
+
+      function printArrayPrenotazioni(a){
+
+        $("div#listanuoveprenotazioni").html('<div class="row"><div class="col-sm-5">Giorno</div><div class="col-sm-5">Nominativo</div><div class="col-sm-2">Livello</div></div>');
+        a.forEach(function(item,index){
+            let riga="<div class='row'><div class='col-sm-5'>"+ item.giorno +"</div>"+
+            "<div class='col-sm-5'>"+ item.cognome +' '+item.nome +'('+item.eta+')'+"</div>"+
+            "<div class='col-sm-2'>"+ item.livello +"</div>";
+            $("div#listanuoveprenotazioni").append(riga);
+        })
+        $("button#numeronuoveprenotazioni > span.badge").text(a.length);
+
+    }
+    printArrayPrenotazioni(PrenotazioniToArray());
+
+    </script>
+   <div id="calendario" class="container-fluid">
+
+    </div>
+{% endblock %}

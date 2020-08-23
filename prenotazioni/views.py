@@ -3,29 +3,29 @@ from django.views.generic import View
 from django.http import JsonResponse
 from .models import  Clienti, Prenotazioni
 from django.contrib.auth import authenticate, login, logout
+import datetime
 
 def login_register(request):
       return render(request, 'prenotazioni/accesso.html')
-    #return render(request, "prenotazioni/login.html")
 
 
 def logout_view(request):
     logout(request)
-    return render(request, "prenotazioni/login.html")
+    return render(request, "prenotazioni/accesso.html")
 
 
 def accesso_utente(request):
-    username = request.POST['loginemail']
-    password = request.POST['loginpassword']
+    username = request.POST['email']
+    password = request.POST['password']
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
         if user.is_staff:
             # utente admin autenticato
-            a = {"msg": "Benvenuto:!&nbsp;<b>" + user.username +"</b>"}
+            a = {"msg": "Benvenuto, &nbsp;<b>" + user.username +"</b>", "tipo": "admin"}
         else:
             # utente normale autenticato
-            a = {"msg": "Benvenuto:!" + user.username}
+            a = {"msg": "Benvenuto, " + user.username, "tipo": "utente"}
     else:
         # utente inesistente
         a = {"msg": "Utente inesistente!"}
@@ -64,12 +64,11 @@ def registrazione(request):
     pippo={"msg":msg, "obj": obj}
     return JsonResponse(pippo)
 
-def calendario(request):
-    return render(request, "prenotazioni/calendario.html")
+def homecliente(request):
+    prenotazioni = Prenotazioni.objects.filter(cliente=Clienti.objects.filter(email=request.user.email).first())
+    return render(request, 'prenotazioni/homecliente.html', {'prenotazioni': prenotazioni})
 
-def clienti(request, id):
-    return render(request, "prenotazioni/clienti.html", {'object': Clienti.objects.get(pk=id)})
-
-def lista_clienti(request):
-    clientis = Clienti.objects.order_by("nome")
-    return render(request, 'prenotazioni/lista_clienti.html', {'clientis': clientis})
+def homeadmin(request):
+    nuoviclienti = Clienti.objects.order_by("nome")
+    nuoveprenotazioni=Prenotazioni.objects.filter(giorno__gte=datetime.date.today()).order_by("giorno")
+    return render(request, 'prenotazioni/homeadmin.html', {'nuoviclienti': nuoviclienti,"nuoveprenotazioni":nuoveprenotazioni})

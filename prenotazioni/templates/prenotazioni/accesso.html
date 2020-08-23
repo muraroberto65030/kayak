@@ -15,14 +15,14 @@
 </script>
 <div id="login_form" >
     <h2>Login</h2>
-    <form id="loginUser" method="POST" action="/prenotazioni/login">
+    <form id="loginUser" method="POST" action="">
         <div class="form-group">
             <input class="form-control" type="text" name="loginemail" placeholder="email" required>
         </div>
         <div class="form-group">
-            <input class="form-control" type="text" name="loginpassword" placeholder="Password" required>
+            <input class="form-control" type="password" name="loginpassword" placeholder="Password" required>
         </div>
-         {% csrf_token %}
+        {% csrf_token %}
         <button class="btn" type="submit">Accedi</button>
     </form>
     <button class="btn">Login facebook</button>
@@ -34,41 +34,42 @@
     //Create Django Ajax call
 
  $("form#loginUser").submit(function() {
- var emailInput=$('input[name="loginemail"]').val().trim();
-        var passwordInput=$('input[name="loginpassword"]').val().trim();
-        if (emailInput && passwordInput) {
-         $.ajax({
-            url:"prenotazioni/login",
-            data: {
-                    'csrfmiddlewaretoken':crsf,
-                    'email': emailInput,
-                    'password':passwordInput
-            },
-            dataType: 'json',
-            type: "POST",
-            success: function (response) {
-                   jsondata=JSON.parse(response);
-                   $("#msgerrore").val(jsondata.msg);
-                   // if(jsondata.msg=="tuttoOk"){
-                   //     $("#confermaregutente").val(jsondata.obj.nome)
-                   //     $("#confermareg").show();
-                   //     $("#register").hide();
-                   //  } else
-                   //     $("#msgerrore").html(data.msg);
+    var emailInput=$('input[name="loginemail"]').val().trim();
+    var passwordInput=$('input[name="loginpassword"]').val().trim();
+    var csrf=$('input[name="csrfmiddlewaretoken"]').val().trim();
+    if (emailInput && passwordInput) {
+     $.ajax({
+        url:"prenotazioni/login",
+        data: {
+                'csrfmiddlewaretoken':csrf,
+                'email': emailInput,
+                'password':passwordInput
+        },
+        dataType: 'JSON',
+        type: "POST",
+        success: function (dati) {
 
-             },
-             error: function(xhr, status, error){
-                var errorMessage = xhr.status + ': ' + xhr.statusText
-                alert('Error - ' + errorMessage);
-             }
-           });
-          }
-          else {
-            alert("All fields must have a valid value.");
-          }
-        $('form#loginUser').trigger("reset");
-        return false;
-    });
+                $("p#msgerrore").html(dati.msg);
+                if (dati.tipo){
+                    if(dati.tipo=="admin"){
+                        location.href="prenotazioni/homeadmin"
+                      
+                    }
+                }
+
+         },
+         error: function(xhr, status, error){
+            var errorMessage = xhr.status + ': ' + xhr.statusText
+            alert('Error - ' + errorMessage);
+         }
+       });
+      }
+      else {
+        alert("All fields must have a valid value.");
+      }
+    $('form#loginUser').trigger("reset");
+    return false;
+ });
 
 </script>
 
@@ -107,7 +108,7 @@
 
             </div>
 
-            {% csrf_token %}
+
 
 
           <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
@@ -168,9 +169,11 @@
 
 </script>
 
-<p style="color:red" id="msgerrore"></p>
-
-
-Ciao, {{user}}
-
+<p style="color:red" id="msgerrore">Ciao,</p>
+    <div id="schermatahomeadmin" style="display: none">
+    <h2>menu admin</h2>
+    </div>
+    <div id="schermatahomeutente" style="display: none">
+    <h2>menu utente</h2>
+    </div>
 {% endblock %}
