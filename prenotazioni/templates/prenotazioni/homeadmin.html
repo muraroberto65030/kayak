@@ -1,10 +1,10 @@
 {% extends 'prenotazioni/home.html' %}
 {% load static %}
 
-{% block title %}Registrazione{% endblock %}
+{% block title %}Home Admin{% endblock %}
 
 {% block content %}
-
+  {% csrf_token %}
     {% for cliente in nuoviclienti %}
         <div class="nuovocliente" style="display:none">
             <p>{{ cliente.nome }}</p>
@@ -18,21 +18,41 @@
        {% for prenotazione in nuoveprenotazioni %}
         <div class="nuovaprenotazione" style="display:none">
             <p>{{ prenotazione.giorno }}</p>
+            <p>{{ prenotazione.ora }}</p>
             <p>{{ prenotazione.cliente.cognome }}</p>
             <p>{{ prenotazione.cliente.nome }}</p>
             <p>{{ prenotazione.cliente.eta }}</p>
             <p>{{ prenotazione.cliente.livello }}</p>
         </div>
     {%  endfor %}
-    <button id="home" class="btn" onclick="gotoHome()"><span class="glyphicon glyphicon-home"></span></button>
-    <button id="numeronuoviclienti" class="btn" onclick="gotoClienti()"><span class="glyphicon glyphicon-user"></span><span class="badge">4</span></button>
-    <button id="numeronuoveprenotazioni" class="btn" onclick="gotoPrenotazioni()"><span class="glyphicon glyphicon-tags"></span><span class="badge">4</span></button>
-    <button id="impostazioni" class="btn" onclick="gotoImpostazioni()"><span class="glyphicon glyphicon-cog"></span></button>
-    <button id="impostazioni" class="btn" onclick="logout()"><span class="glyphicon glyphicon-log-out"></span></button>
+<div class="container-fluid" id="calendario">
+    <div class="row logo" >
+        <span id="logo"></span>
+    </div>
+    <div class="row riga">
+        <div class="col-sm-2 colonna">
+            <button id="home" class="btn pulsante" onclick="gotoHome()"><span class="glyphicon glyphicon-home"></span></button>
+        </div>
+        <div class="col-sm-3 colonna">
+            <button id="numeronuoviclienti" class="btn pulsante" onclick="gotoClienti()"><span class="glyphicon glyphicon-user"></span><span class="badge">4</span></button>
+        </div>
+        <div class="col-sm-2 colonna">
+            <button id="numeronuoveprenotazioni" class="btn pulsante" onclick="gotoPrenotazioni()"><span class="glyphicon glyphicon-tags"></span><span class="badge">4</span></button>
+        </div>
+        <div class="col-sm-2 colonna">
+            <button id="impostazioni" class="btn pulsante" onclick="gotoImpostazioni()"><span class="glyphicon glyphicon-cog"></span></button>
+        </div>
+        <div class="col-sm-2 colonna">
+            <button id="logoutbtn" class="btn pulsante" onclick="logout()"><span class="glyphicon glyphicon-log-out"></span></button>
+        </div>
+    </div>
+    <div class="row" style="text-align:center" id="admintitolo"><h2 class="grande">Prossime uscite</h2></div>
     <div id="listanuoviclienti" class="container" style="display:none">
+
     </div>
 
     <div id="listanuoveprenotazioni" class="container" style="display:none">
+
     </div>
 
     <div id="impostazioni" class="container" style="display:none">
@@ -50,21 +70,25 @@
         });
     }
     function gotoHome(){
+        $('div#admintitolo > h2').text('Prossime uscite')
         $('div#listanuoviclienti').hide();
         $('div#listanuoveprenotazioni').hide();
         $('div#impostazioni').hide();
     }
     function gotoClienti(){
+        $('div#admintitolo > h2').text('Nuove iscrizioni')
         $('div#listanuoviclienti').show();
         $('div#listanuoveprenotazioni').hide();
         $('div#impostazioni').hide();
     }
     function gotoPrenotazioni(){
+        $('div#admintitolo > h2').text('Nuove prenotazioni')
         $('div#listanuoviclienti').hide();
         $('div#listanuoveprenotazioni').show();
         $('div#impostazioni').hide();
     }
     function gotoImpostazioni(){
+        $('div#admintitolo > h2').text('Impostazioni')
         $('div#listanuoviclienti').hide();
         $('div#listanuoveprenotazioni').hide();
         $('div#impostazioni').show();
@@ -84,11 +108,11 @@
 
     function printArrayClienti(a){
 
-        $("div#listanuoviclienti").html('<div class="row"><div class="col-sm-5">Nominativo</div><div class="col-sm-5">Email</div><div class="col-sm-2">Livello</div></div>');
+        $("div#listanuoviclienti").html('<div class="row admin-clienti-titolo"><div class="col-sm-5">Nominativo</div><div class="col-sm-5">Email</div><div class="col-sm-2">Livello</div></div>');
         a.forEach(function(item,index){
-            let riga="<div class='row'><div class='col-sm-5'>"+ item.cognome +' '+item.nome +'('+item.eta+')'+"</div>"+
+            let riga="<div class='row admin-clienti-riga'><div class='col-sm-5'>"+ item.cognome +' '+item.nome +'('+item.eta+')'+"</div>"+
             "<div class='col-sm-5'>"+ item.email +"</div>"+
-            "<div class='col-sm-2'>"+ item.livello +"</div>";
+            "<div class='col-sm-2' ><font style='float:right'>"+ item.livello +"</font></div>";
             $("div#listanuoviclienti").append(riga);
         })
         $("button#numeronuoviclienti > span.badge").text(a.length);
@@ -131,10 +155,11 @@
          let a=new Array();
         $("div.nuovaprenotazione").each(function (){
             let riga={"giorno":$(this).children("p").first().text(),
-                "cognome":$(this).children("p").first().next().text(),
-                "nome":$(this).children("p").first().next().next().text(),
-                "eta":$(this).children("p").first().next().next().next().text(),
-                "livello":$(this).children("p").first().next().next().next().next().text()}
+                "ora":$(this).children("p").first().next().text(),
+                "cognome":$(this).children("p").first().next().next().text(),
+                "nome":$(this).children("p").first().next().next().next().text(),
+                "eta":$(this).children("p").first().next().next().next().next().text(),
+                "livello":$(this).children("p").first().next().next().next().next().next().text()}
                 a.push(riga);
         })
         return a;
@@ -142,9 +167,10 @@
 
       function printArrayPrenotazioni(a){
 
-        $("div#listanuoveprenotazioni").html('<div class="row"><div class="col-sm-5">Giorno</div><div class="col-sm-5">Nominativo</div><div class="col-sm-2">Livello</div></div>');
+        $("div#listanuoveprenotazioni").html('<div class="row"><div class="col-sm-3">Giorno</div><div class="col-sm-2">Ora</div><div class="col-sm-5">Nominativo</div><div class="col-sm-2">Livello</div></div>');
         a.forEach(function(item,index){
-            let riga="<div class='row'><div class='col-sm-5'>"+ item.giorno +"</div>"+
+            let riga="<div class='row'><div class='col-sm-3'>"+ item.giorno +"</div>"+
+            "<div class='col-sm-2'>"+ item.ora +"</div>"+
             "<div class='col-sm-5'>"+ item.cognome +' '+item.nome +'('+item.eta+')'+"</div>"+
             "<div class='col-sm-2'>"+ item.livello +"</div>";
             $("div#listanuoveprenotazioni").append(riga);
@@ -154,8 +180,36 @@
     }
     printArrayPrenotazioni(PrenotazioniToArray());
 
+
+
+
+    $("div.admin-clienti-riga").click(
+        function(){
+        let email=$(this).children("div").first().next().text();
+        let csrf=$('input[name="csrfmiddlewaretoken"]').val();
+        $.ajax({
+        url:"/prenotazioni/accettacliente",
+        data: {
+            'csrfmiddlewaretoken':csrf,
+            'email': email
+             },
+        dataType: 'JSON',
+        type: "POST",
+            success: function (data) {
+                location.reload();
+                gotoClienti();
+            },
+            error: function (){
+                alert("errore");
+			}
+        });
+
+        }
+    );
+
     </script>
-   <div id="calendario" class="container-fluid">
+
 
     </div>
+
 {% endblock %}

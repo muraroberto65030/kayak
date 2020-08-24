@@ -1,8 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.views.generic import View
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from .models import  Clienti, Prenotazioni
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+
 import datetime
 
 def login_register(request):
@@ -69,6 +71,22 @@ def homecliente(request):
     return render(request, 'prenotazioni/homecliente.html', {'prenotazioni': prenotazioni})
 
 def homeadmin(request):
-    nuoviclienti = Clienti.objects.order_by("nome")
-    nuoveprenotazioni=Prenotazioni.objects.filter(giorno__gte=datetime.date.today()).order_by("giorno")
-    return render(request, 'prenotazioni/homeadmin.html', {'nuoviclienti': nuoviclienti,"nuoveprenotazioni":nuoveprenotazioni})
+    if request.user.is_staff:
+        nuoviclienti = Clienti.objects.filter(autorizzato=0).order_by("nome")
+        nuoveprenotazioni=Prenotazioni.objects.filter(giorno__gte=datetime.date.today()).filter(accettata=0).order_by("giorno")
+        return render(request, 'prenotazioni/homeadmin.html', {'nuoviclienti': nuoviclienti,"nuoveprenotazioni":nuoveprenotazioni})
+    else:
+        raise Http404("Operazione non autorizzata! Ci hai provato...")
+
+def accettacliente(request):
+    if request.user.is_staff:
+        clienteemail=request.POST['email']
+        print(clienteemail)
+        cliente=Clienti.objects.filter(email=clienteemail).first()
+        cliente.autorizzato=1;
+        cliente.save()
+        User.objects.create_user(cliente.email, cliente.email, cliente.password)
+        pippo={"msg":"Utente creato con successo"}
+        return JsonResponse(pippo)
+    else:
+        raise Http404("Operazione non autorizzata! Ci hai provato...")

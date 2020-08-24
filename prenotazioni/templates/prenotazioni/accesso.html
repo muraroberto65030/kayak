@@ -13,21 +13,31 @@
 
     }
 </script>
-<div id="login_form" >
-    <h2>Login</h2>
-    <form id="loginUser" method="POST" action="">
-        <div class="form-group">
-            <input class="form-control" type="text" name="loginemail" placeholder="email" required>
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="loginpassword" placeholder="Password" required>
-        </div>
-        {% csrf_token %}
-        <button class="btn" type="submit">Accedi</button>
-    </form>
-    <button class="btn">Login facebook</button>
+<div class="container" id="login_form" >
+    <div class="row">
+        <h2 class="grande">Login</h2>
+    </div>
+    <div class="row">
+        <form id="loginUser" style="text-align:center" method="POST" action="">
+            <div class="form-group">
+                <input class="form-control grande" style="height: max-content" type="text" name="loginemail" placeholder="email" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control grande" style="height: max-content" type="password" name="loginpassword" placeholder="Password" required>
+            </div>
+            {% csrf_token %}
+            <button class="btn grande" type="submit">Accedi</button>
+        </form>
+    </div>
+    <div class="row">
+        <button class="btn">Login facebook</button>
+    </div>
+    <div class="row">
     <button class="btn">Login Google</button>
-    <button class="btn" onclick="gotoReg();">Registrati</button>
+    </div>
+    <div class="row">
+        <button class="btn link" onclick="gotoReg();">Registrati</button>
+    </div>
 </div>
 
 <script class="type/javascript">
@@ -77,42 +87,43 @@
      <p style="color:green;font-size:1.8em">Grazie <span id="confermaregutente">p</span>per esserti registrato. Attendi la conferma tramite e-mail</p>
 </div>
 
-<div id="register" class="comm" style="display:none">
+<div id="register" class="comm" style="display:none;text-align:center">
+        <div class="row">
+            <h2 class="grande">I tuoi dati</h2>
+        </div>
+        <div class="row">
+            <form id="addUser" action="/registrazione/">
+                <div class="form-group">
+                    <input class="form-control grandeinput" type="text" name="nome" placeholder="Nome" required>
+                </div>
+                <div class="form-group">
+                    <input class="form-control grandeinput" type="text" name="cognome" placeholder="Cognome" required>
+                </div>
+                <div class="form-group">
+                    <input class="form-control grandeinput" type="number" name="eta" min="10" max="100" placeholder="Età" required>
+                </div>
 
-        <h2>Registrati:</h2>
-        <form id="addUser" action="/registrazione/">
-            <div class="form-group">
-                <input class="form-control" type="text" name="nome" placeholder="Nome" required>
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="text" name="cognome" placeholder="Cognome" required>
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="number" name="eta" min="10" max="100" placeholder="Età" required>
-            </div>
-
-            <div class="form-group">
-                <input class="form-control" type="text" name="indirizzo" placeholder="Indirizzo" required>
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="number" name="telefono" placeholder="Telefono" required>
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="text" name="livello" placeholder="Livello" required>
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="text" name="email" placeholder="email" required>
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="text" name="password" placeholder="Password" required>
-
-            </div>
-
-
-
-
-          <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
-    </form>
+                <div class="form-group">
+                    <input class="form-control grandeinput" type="text" name="indirizzo" placeholder="Indirizzo" required>
+                </div>
+                <div class="form-group">
+                    <input class="form-control grandeinput" type="number" name="telefono" placeholder="Telefono" required>
+                </div>
+                <div class="form-group">
+                    <input class="form-control grandeinput" type="text" name="livello" placeholder="Livello" required>
+                </div>
+                <div class="form-group">
+                    <input class="form-control grandeinput" type="text" name="email" placeholder="email" required>
+                </div>
+                <div class="form-group">
+                    <input class="form-control grandeinput" type="text" name="password" placeholder="Password" required>
+                </div>
+              <button class="btn grandeinput" type="submit">Richiedi accesso</button>
+            </form>
+        </div>
+    <div class="row">
+        <button class="btn grandeinput" onclick="location.href='/'">Indietro</button>
+    </div>
 </div>
 <script class="type/javascript">
     //Create Django Ajax call
@@ -169,11 +180,6 @@
 
 </script>
 
-<p style="color:red" id="msgerrore">Ciao,</p>
-    <div id="schermatahomeadmin" style="display: none">
-    <h2>menu admin</h2>
-    </div>
-    <div id="schermatahomeutente" style="display: none">
-    <h2>menu utente</h2>
-    </div>
+<p style="color:red" id="msgerrore">Debug</p>
+
 {% endblock %}
