@@ -181,7 +181,14 @@
     printArrayPrenotazioni(PrenotazioniToArray());
 
 
-
+    function eliminarigacliente(email){
+        $("div.nuovocliente").each(function(){
+            if(email==$(this).children("p").first().next().next().text()){
+                $(this).remove();
+                printArrayClienti(sortClientiByName(ClientitoArray()));
+            }
+        });
+    }
 
     $("div.admin-clienti-riga").click(
         function(){
@@ -196,8 +203,7 @@
         dataType: 'JSON',
         type: "POST",
             success: function (data) {
-                location.reload();
-                gotoClienti();
+                eliminarigacliente(email);
             },
             error: function (){
                 alert("errore");

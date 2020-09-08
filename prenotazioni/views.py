@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import View
 from django.http import JsonResponse, Http404
-from .models import  Clienti, Prenotazioni
+from .models import  Clienti, Prenotazioni, Configurazione
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
@@ -67,8 +67,13 @@ def registrazione(request):
     return JsonResponse(pippo)
 
 def homecliente(request):
-    prenotazioni = Prenotazioni.objects.filter(cliente=Clienti.objects.filter(email=request.user.email).first())
-    return render(request, 'prenotazioni/homecliente.html', {'prenotazioni': prenotazioni})
+    if request.user.is_anonymous:
+        return render(request, 'prenotazioni/accesso.html')
+    else:
+        cfg = Configurazione.objects.last()
+
+        prenotazioni = Prenotazioni.objects.filter(cliente__email=request.user.email)
+        return render(request, 'prenotazioni/homecliente.html', {'prenotazioni': prenotazioni, 'cfg':cfg})
 
 def homeadmin(request):
     if request.user.is_staff:

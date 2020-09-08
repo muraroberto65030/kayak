@@ -1,0 +1,24 @@
+{% extends 'prenotazioni/home.html' %}
+{% load static %}
+
+{% block title %}Home Cliente{% endblock %}
+
+{% block content %}
+  {% csrf_token %}
+        <input type="hidden" name="orariuscitesettimanali" value="{{ cfg.orariuscitesettimanali }}" />
+
+
+       {% for prenotazione in nuoveprenotazioni %}
+           <div class="nuovaprenotazione" style="display:none">
+            <p>{{ prenotazione.giorno }}</p>
+            <p>{{ prenotazione.ora }}</p>
+            <p>{{ prenotazione.cliente.cognome }}</p>
+            <p>{{ prenotazione.cliente.nome }}</p>
+            <p>{{ prenotazione.cliente.eta }}</p>
+            <p>{{ prenotazione.cliente.livello }}</p>
+        </div>
+    {%  endfor %}
+<div class="container-fluid" id="calendario">
+
+</div>
+{% endblock %}
